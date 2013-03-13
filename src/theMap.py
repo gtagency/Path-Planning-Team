@@ -73,6 +73,6 @@ m = mapInterface()
 #make a lattice path map
 m.makeLattice()
 #make map using the given txt file
-m.makeTxtMap("map2.txt")
+# m.makeTxtMap("map2.txt")
 #getProbability that a given point is passable
 m.getProbability(100,100)

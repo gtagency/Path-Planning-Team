@@ -1,3 +1,6 @@
+import math
+from theMap import *
+from state import *
 
 
 def search(map, start):
@@ -58,7 +61,7 @@ def heuristic(state):
     return 1
 
 
-def isGoal():
+def isGoal(state):
     return False
 
 
@@ -68,5 +71,5 @@ def stepCost(state):
 
 map = mapInterface()
 map.makeLattice()
-startState = new State(250, 250, 5, 1)
+startState = State(250, 250, 5, 1, 1)
 solution = search(map, startState)

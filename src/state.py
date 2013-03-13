@@ -68,7 +68,7 @@ class State:
                 xUpdate, yUpdate = DIRECTIONS[directionToGo]
                 if((self.x+xUpdate) >= XLIMIT[0] and (self.x+xUpdate) <= XLIMIT[1] and (self.y+yUpdate) >= YLIMIT[0] and (self.y+yUpdate) <= YLIMIT[1]):
                     successors.append(State(self.x+xUpdate, self.y+yUpdate, directionToGo, self.speed, self.probability))
-            successors.append(self.x, self.y, self.direction, 0, self.probability)
+            successors.append(State(self.x, self.y, self.direction, 0, self.probability))
         elif(self.speed == 0):
             for i in range(self.direction-1, self.direction+2):
                 directionToGo = i % 8
