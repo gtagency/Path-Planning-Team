@@ -8,8 +8,8 @@ public class GridPanel extends JPanel {
     private ArrayList<Location> path;
 
     public GridPanel(int n, int m) {
-        height = n;
-        width = m;
+        height = 20*n;
+        width = 20*m;
         Random costGenerator = new Random();
         grid = new Location[n][m];
         for(int x=0;x<grid.length;x++) {
@@ -31,6 +31,15 @@ public class GridPanel extends JPanel {
 
     public void paint(Graphics g) {
         g.clearRect(0, 0, width, height);
+
+        g.setColor(new Color(0,0,0));
+        for(int x=0;x<grid.length;x++) {
+            for(int y=0;y<grid[x].length;y++) {
+                g.fillOval(20*x, 20*y, (int)(15*grid[x][y].OBSTACLE_PROBABILITY), (int)(15*grid[x][y].OBSTACLE_PROBABILITY));
+            }
+        }
+
+
         g.setColor(Color.RED);
         for(int i=0;i<path.size()-1;i++) {
             int x1 = (int)(path.get(i).point.getX()),
@@ -44,26 +53,26 @@ public class GridPanel extends JPanel {
             g.fillOval(20*x2, 20*y2, (int)(15*grid[x2][y2].OBSTACLE_PROBABILITY), (int)(15*grid[x2][y2].OBSTACLE_PROBABILITY));
 
         }
-
-
-
-        g.setColor(new Color(0,0,0));
-        for(int x=0;x<grid.length;x++) {
-            for(int y=0;y<grid[x].length;y++) {
-                g.fillOval(20*x, 20*y, (int)(15*grid[x][y].OBSTACLE_PROBABILITY), (int)(15*grid[x][y].OBSTACLE_PROBABILITY));
-            }
-        }
     }
     public int heuristic(Location start, Location end) {
         return (int)(start.point.distance(end.point));
     }
 
     public ArrayList<Location> aStar(Location start, Location end) {
+        // array of visited nodes
         ArrayList<Location> visited = new ArrayList<Location>();
+
+        //pq for nodes yet to be examined
         PriorityQueue<Location> nodes = new PriorityQueue<Location>();
+
+        //the best place to begin is at the beginning
         nodes.add(start);
+
+        //likewise, the best path is the one that starts at the start
         path.add(start);
-        start.setPathTo(path);
+
+        //set the path on start
+        start.setPathTo((ArrayList<Location>)path.clone());
         while(!nodes.isEmpty()) {
             Location current = nodes.poll();
             if(current.equals(end)) {
@@ -77,7 +86,7 @@ public class GridPanel extends JPanel {
                                 + heuristic(child, end));
                 path = (ArrayList<Location>)current.getPathTo().clone();
                 path.add(child);
-                child.setPathTo(path);
+                child.setPathTo((ArrayList<Location>)path.clone());
                 nodes.add(child);
             }
             repaint();
@@ -87,6 +96,7 @@ public class GridPanel extends JPanel {
                 now = System.nanoTime();
             }while((now - startTime) < 5000000l);
         }
+        repaint();
         return path;
     }
 
@@ -130,6 +140,6 @@ public class GridPanel extends JPanel {
     // }
 
     public static void main(String[] args) {
-        GridPanel panel = new GridPanel(10, 10);
+        GridPanel panel = new GridPanel(20, 20);
     }
 }
