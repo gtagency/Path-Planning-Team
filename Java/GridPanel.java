@@ -1,6 +1,7 @@
 import java.awt.*;
 import javax.swing.*;
 import java.util.*;
+import java.io.*;
 
 public class GridPanel extends JPanel {
     private Location[][] grid;
@@ -8,6 +9,12 @@ public class GridPanel extends JPanel {
     private ArrayList<Location> path;
     private ArrayList<Location> currentPath;
     private final int MULTIPLIER = 20;
+
+    //throttle this to change the obstacle weight
+    private final double OBSTACLE_WEIGHT = 0.7;
+
+    //throttle this to change heuristic's input
+    private final double HEURISTIC_WEIGHT = .5;
 
 
     /**
@@ -24,24 +31,62 @@ public class GridPanel extends JPanel {
         grid = new Location[rows][cols];
         for(int x=0;x<grid.length;x++) {
             for(int y=0;y<grid[x].length;y++) {
-                grid[x][y] = new Location(x,y, (costGenerator.nextInt(8) + 3));
+                grid[x][y] = new Location(x,y, 
+                    (OBSTACLE_WEIGHT*costGenerator.nextInt(10) + 3));
             }
         }
         grid[rows-1][cols-1] = new Location(rows-1, cols-1, 1);
+        init();
+    }
 
+    public GridPanel(String fileName) {
+        Scanner fileIn = null;
+        try {
+            fileIn = new Scanner(new File(fileName));
+        }
+        catch(FileNotFoundException ex) {
+            System.out.println("A non-existent file? How could you do this to me?!");
+            System.exit(0);
+        }
 
+        ArrayList<String> file = new ArrayList<String>();
+
+        while(fileIn.hasNextLine()) {
+            String line = fileIn.nextLine();
+            file.add(line);
+        }
+        grid = new Location[file.size()][file.get(0).length()];
+        height = file.size()*MULTIPLIER;
+        width = file.get(0).length()*MULTIPLIER;
+
+        int row = 0,
+            col = 0;
+
+        for(String line : file){
+            for(char c : line.toCharArray()) {
+                grid[col][row] = new Location(col, row, 3 + (c == '#' ? 
+                                                    10*OBSTACLE_WEIGHT : 0));
+                col++;
+            }
+            col = 0;
+            row++;
+        }
+        init();
+    }
+
+    private void init() {
         JFrame jframe = new JFrame();
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(MULTIPLIER*(rows+1),
-                                        MULTIPLIER*(cols+1)));
+        setPreferredSize(new Dimension(height + MULTIPLIER, width));
         jframe.getContentPane().add(this);
         jframe.pack();
         jframe.setVisible(true);
 
         path = new ArrayList<Location>();
-        aStar(grid[0][0], grid[rows-1][cols-1]);
-       // DFS(grid[0][0], grid[rows-1][cols-1]);
-       // BFS(grid[0][0], grid[rows-1][cols-1]);
+        currentPath = new ArrayList<Location>();
+
+        aStar(grid[0][0], grid[grid.length-1][grid[grid.length-1].length-1]);
+        // repaint();
     }
 
     /**
@@ -104,7 +149,8 @@ public class GridPanel extends JPanel {
      * Heuristic between two things
      */
     public int heuristic(Location start, Location end) {
-        return (int)(Math.sqrt(Math.pow(start.getX() - end.getX(),2) 
+        return (int)(HEURISTIC_WEIGHT*Math.sqrt(
+                        Math.pow(start.getX() - end.getX(),2) 
                     + Math.pow(start.getY() - end.getY(),2)));
     }
 
@@ -215,6 +261,11 @@ public class GridPanel extends JPanel {
 
 
    public static void main(String[] args) {
-        GridPanel panel = new GridPanel(30, 30);
+    GridPanel panel;
+    if(args.length > 0)
+        panel = new GridPanel(args[0]);
+    else
+        panel = new GridPanel(20, 20);
+
     }
 }
