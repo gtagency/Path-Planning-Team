@@ -14,6 +14,18 @@ class State:
         self.probability = probability
         self.speed = speed
 
+    def __eq__(self, other):
+        return ((self.x == other.x) and (self.y == other.y) and (self.direction == other.direction) and (self.speed == other.speed))
+
+    def __ne__(self, other):
+        return (not ((self.x == other.x) and (self.y == other.y) and (self.direction == other.direction) and (self.speed == other.speed)))
+
+    def __str__(self):
+        print "X is: {0}".format(self.x)
+        print "Y is: {0}".format(self.y)
+        print "Direction is: {0}".format(self.direction)
+        print "Speed is: {0}".format(self.speed)
+
     #getters and setters for x and y coordinates
     def getX(self):
         return self.x
