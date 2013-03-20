@@ -71,5 +71,5 @@ def stepCost(state):
 
 map = mapInterface()
 map.makeLattice()
-startState = State(250, 250, 5, 1, 1)
+startState = State(250, 250, 5, 1)
 solution = search(map, startState)
