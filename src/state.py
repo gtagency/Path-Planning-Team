@@ -82,6 +82,28 @@ class State:
                     successors.append(State(self.x+xUpdate, self.y+yUpdate, directionToGo, -1, self.probability))
         return successors
 
+    def getPredecessors(self):
+        predecessors = []
+        if(self.speed == 1 or self.speed == -1):
+            for i in range(self.direction+7, self.direction+10):
+                directionToGo = i % 8
+                xUpdate, yUpdate = DIRECTIONS[directionToGo]
+                if((self.x+xUpdate) >= XLIMIT[0] and (self.x+xUpdate) <= XLIMIT[1] and (self.y+yUpdate) >= YLIMIT[0] and (self.y+yUpdate) <= YLIMIT[1]):
+                    predecessors.append(State(self.x+xUpdate, self.y+yUpdate, directionToGo, self.speed, self.probability))
+            predecessors.append(State(self.x, self.y, self.direction, 0, self.probability))
+        elif(self.speed == 0):
+            for i in range(self.direction-1, self.direction+2):
+                directionToGo = i % 8
+                xUpdate, yUpdate = DIRECTIONS[directionToGo]
+                if((self.x+xUpdate) >= XLIMIT[0] and (self.x+xUpdate) <= XLIMIT[1] and (self.y+yUpdate) >= YLIMIT[0] and (self.y+yUpdate) <= YLIMIT[1]):
+                    predecessors.append(State(self.x+xUpdate, self.y+yUpdate, directionToGo, -1, self.probability))
+            for i in range(self.direction+7, self.direction+10):
+                directionToGo = i % 8
+                xUpdate, yUpdate = DIRECTIONS[directionToGo]
+                if((self.x+xUpdate) >= XLIMIT[0] and (self.x+xUpdate) <= XLIMIT[1] and (self.y+yUpdate) >= YLIMIT[0] and (self.y+yUpdate) <= YLIMIT[1]):
+                    predecessors.append(State(self.x+xUpdate, self.y+yUpdate, directionToGo, 1, self.probability))
+        return predecessors
+
 
 # Testing
 # state = State(5,7,1,1)
